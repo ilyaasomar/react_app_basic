@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
-
+import React from "react";
+import { useState, useReducer, useContext } from "react";
+import CreatePost from "./components/CreatePost";
+import Header from "./components/Header";
+import Login from "./components/Login";
+import PostList from "./components/PostList";
+import { createContext } from "react";
+export const UserContext = createContext();
+export const PostContext = createContext({ posts: [] });
+import postReducer from "./postReducer";
 function App() {
+  const [user, setUser] = useState("ilyaas");
+  // const [posts, setPosts] = useState([]);
+  const initialPostContext = useContext(PostContext);
+  const [state, dispatch] = useReducer(postReducer, initialPostContext);
+  if (!user) return <Login setUser={setUser} />;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <PostContext.Provider value={{ state, dispatch }}>
+      <UserContext.Provider value={user}>
+        <Header setUser={setUser} />
+        <CreatePost user={user} />
+        <PostList />
+      </UserContext.Provider>
+    </PostContext.Provider>
   );
 }
 
